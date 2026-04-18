@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{25744209-cadd-4ba5-8bfc-c161ab271a72}</ProjectGuid>
+    <RootNamespace>RepoHax</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\bin\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Configuration)\obj\</IntDir>
+    <TargetName>version</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)build\$(Configuration)\bin\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Configuration)\obj\</IntDir>
+    <TargetName>version</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;REPOHAX_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp23</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;REPOHAX_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp23</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\cheat.cpp" />
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\game_hooks.cpp" />
+    <ClCompile Include="src\haxsdk\gui\hax_gui.cpp" />
+    <ClCompile Include="src\haxsdk\gui\hax_gui_dx11.cpp" />
+    <ClCompile Include="src\haxsdk\hax.cpp" />
+    <ClCompile Include="src\haxsdk\unity\hax_unity.cpp" />
+    <ClCompile Include="src\safetyhook\safetyhook.cpp">
+      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">None</DebugInformationFormat>
+    </ClCompile>
+    <ClCompile Include="src\safetyhook\Zydis.c">
+      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">None</DebugInformationFormat>
+    </ClCompile>
+    <ClCompile Include="src\version.cpp" />
+    <ClCompile Include="src\visuals.cpp" />
+    <ClCompile Include="src\widgets.cpp" />
+    <ClCompile Include="src\win_hooks.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\game_hooks.h" />
+    <ClInclude Include="src\visuals.h" />
+    <ClInclude Include="src\resource.h" />
+    <ClInclude Include="src\cheat.h" />
+    <ClInclude Include="src\game_classes.h" />
+    <ClInclude Include="src\haxsdk\gui\hax_gui.h" />
+    <ClInclude Include="src\haxsdk\gui\hax_gui_dx11.h" />
+    <ClInclude Include="src\haxsdk\hax.h" />
+    <ClInclude Include="src\haxsdk\unity\hax_unity.h" />
+    <ClInclude Include="src\safetyhook\safetyhook.hpp" />
+    <ClInclude Include="src\safetyhook\Zydis.h" />
+    <ClInclude Include="src\widgets.h" />
+    <ClInclude Include="src\win_hooks.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\bundles\haxsdkbundle" />
+    <None Include="resources\cursors\beam.cur" />
+    <None Include="resources\cursors\dgn1.cur" />
+    <None Include="resources\cursors\dgn2.cur" />
+    <None Include="resources\cursors\horz.cur" />
+    <None Include="resources\cursors\link.cur" />
+    <None Include="resources\cursors\move.cur" />
+    <None Include="resources\cursors\pointer.cur" />
+    <None Include="resources\cursors\unavailable.cur" />
+    <None Include="resources\cursors\vert.cur" />
+    <None Include="resources\fonts\Icons.woff2" />
+    <None Include="resources\fonts\NunitoSans_Bold.woff2" />
+    <None Include="resources\fonts\NunitoSans_ExtraBold.woff2" />
+    <None Include="resources\fonts\NunitoSans_SemiBold.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RepoHax.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\images\Crouch_Rest_Upgrade.png" />
+    <Image Include="resources\images\Extra_Jump_Upgrade.png" />
+    <Image Include="resources\images\HealthLarge.png" />
+    <Image Include="resources\images\HealthMedium.png" />
+    <Image Include="resources\images\HealthSmall.png" />
+    <Image Include="resources\images\logo.png" />
+    <Image Include="resources\images\QMark.png" />
+    <Image Include="resources\images\Range_Upgrade.png" />
+    <Image Include="resources\images\Sprint_Speed_Upgrade.png" />
+    <Image Include="resources\images\Stamina_Upgrade.png" />
+    <Image Include="resources\images\Strength_Upgrade.png" />
+    <Image Include="resources\images\Tumble_Launch_Upgrade.png" />
+    <Image Include="resources\images\Tumble_Wings_Upgrade.png" />
+    <Image Include="resources\images\Upgrade_Health_Albedo.png" />
+    <Image Include="resources\images\Upgrade_Map-Player-Count_Albedo.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
