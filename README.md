@@ -14,7 +14,7 @@
 > [!CAUTION]
 > To ensure your security, only download the mod from these official sources:
 > 1. [This GitHub Repository] https://github.com/Sacracia/RepoHax
-> 2. [Nexus Mods] **TBD**
+> 2. [Nexus Mods] https://www.nexusmods.com/repo/mods/214
 > 3. [Playground] https://users.playground.ru/3241576/posts
 
 ---
@@ -23,63 +23,76 @@
 
 **Health**
 - God Mode
-- Max Heal
+- Heal to Maximum
 
 **Movement**
 - Infinite Stamina
-- Walk / Crawl / Sprint Speed Modifier
-- Infinite Jump
-- No Fall (fall via hotkey only)
+- Modify Walk / Crouch / Sprint Speed
+- Infinite Jumps
+- No tumble (fall only by pressing hotkey)
 
-**Grabbing & Strength**
-- High Strength (Host / Solo only)
-- Infinite Grab Range
+**Grabbing**
+- High Strength (Host / Single-player only)
+- Unlimited Grab Range
 - No Overload
 
-**Upgrades & Medkits**
-- Apply Shop Upgrades
-- Remote Medkit Usage
+**Upgrades**
+- Apply purchased upgrades (or shop upgrades) to self
+
+**Medkits**
+- Apply purchased medkit to self
 
 **Enemies**
-- Enemy Spawner (Host / Solo only)
-- Blind Enemies (Host / Solo only)
-- No Hold Limit (Host / Solo only)
-- Enemy ESP
+- Spawn (Host / Single-player only)
+- Blind (Host / Single-player only, enemies can still hear)
+- No Hold Time Limit (Host / Single-player only)
+- Display through walls (ESP)
 
 **Players**
-- Player ESP & Chams
-- Trip Selected Player
-- Kill / Revive Player (Host / Solo only)
-- Voice Chat Filter (Live / Dead)
+- Display through walls (ESP)
+- Chams (Highlight through walls)
+- Tumble selected player
+- Kill / Revive selected player (Host / Single-player only)
+- Toggle Voice Chat: Alive / Dead
 
-**Visuals**
+**Vision**
 - Enhanced Vision
-- Third Person Mode
-- FOV Changer
+- Third Person
+- Field of View (FOV)
 - Infinite Dead Head Charge
 
 **Flashlight**
-- Light Intensity & Angle
-- Flashlight while Crawling
+- Light Intensity
+- Lighting Angle
+- Works while crawling
 
 **Valuables**
-- Scrap ESP & Chams
-- Invincible Items (Host / Solo only)
-- Price Override (Zero / Max)
+- Display through walls (ESP)
+- Chams (Highlight through walls)
+- No Damage (Host / Single-player only)
+- Set all prices to Zero / Maximum
 
 **Collection Points**
-- Point ESP
-- Activate Next Point
+- Display through walls (ESP)
+- Activate next point
 
-**Equipment**
-- Infinite Battery
+**Weapons**
+- Maximum Battery while holding
 - Laser Sight
-- Item Spawner (Host / Solo only)
 
-**Level & World**
-- Level Manager (Host / Solo only)
-- Map Filter (Host / Solo only)
-- Van ESP & Teleport
+**Items**
+- Spawn (Host / Single-player only)
+
+**Level**
+- Modify completed levels count (Host / Single-player only)
+- Skip to next level (Host / Single-player only)
+
+**Map Filter**
+- Remove maps from rotation (Host / Single-player only)
+
+**Truck**
+- Display through walls (ESP)
+- Teleport to truck
 
 ---
 
