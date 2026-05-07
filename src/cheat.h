@@ -231,6 +231,8 @@ namespace Cheat
         bool DarkenBg;
 
         size_t TotalBans;
+
+        bool UnlockAllCosmetic;
     };
 
     inline Context* GCheat;

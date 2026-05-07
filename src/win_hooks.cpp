@@ -59,7 +59,7 @@ namespace Cheat::WinHooks
             icon = (HCURSOR)Hax::Gui::GetMouseTexture();
         }
 
-        return GCheat->SetCursorHook.stdcall<HCURSOR, HCURSOR>(icon);
+        return GCheat->SetCursorHook.unsafe_stdcall<HCURSOR, HCURSOR>(icon);
     }
 
     static BOOL WINAPI Hooked_GetCursorPos(LPPOINT lpPoint)
@@ -71,7 +71,7 @@ namespace Cheat::WinHooks
             return TRUE;
         }
 
-        return GCheat->GetCursorPosHook.stdcall<BOOL, LPPOINT>(lpPoint);
+        return GCheat->GetCursorPosHook.unsafe_stdcall<BOOL, LPPOINT>(lpPoint);
     }
 
     static int WINAPI Hooked_ShowCursor(BOOL bShow)
@@ -82,7 +82,7 @@ namespace Cheat::WinHooks
             return bShow ? 1 : -1;
         }
 
-        return GCheat->ShowCursorHook.stdcall<int, BOOL>(bShow);
+        return GCheat->ShowCursorHook.unsafe_stdcall<int, BOOL>(bShow);
     }
 
     static BOOL WINAPI Hooked_ClipCursor(const RECT* lpRect)
@@ -96,7 +96,7 @@ namespace Cheat::WinHooks
             lpRect = nullptr;
         }
 
-        return GCheat->ClipCursorHook.stdcall<BOOL, const RECT*>(lpRect);
+        return GCheat->ClipCursorHook.unsafe_stdcall<BOOL, const RECT*>(lpRect);
     }
 
     static BOOL WINAPI Hooked_SetCursorPos(int x, int y)
@@ -108,7 +108,7 @@ namespace Cheat::WinHooks
             return TRUE;
         }
 
-        return GCheat->SetCursorPosHook.stdcall<BOOL, int, int>(x, y);
+        return GCheat->SetCursorPosHook.unsafe_stdcall<BOOL, int, int>(x, y);
     }
 
     static SHORT WINAPI Hooked_GetAsyncKeyState(int vKey)
@@ -116,7 +116,7 @@ namespace Cheat::WinHooks
         if (GCheat->GameInputPrevented)
             return 0;
 
-        return GCheat->GetAsyncKeyStateHook.stdcall<SHORT, int>(vKey);
+        return GCheat->GetAsyncKeyStateHook.unsafe_stdcall<SHORT, int>(vKey);
     }
 
     static SHORT WINAPI Hooked_GetKeyState(int vKey)
@@ -124,12 +124,12 @@ namespace Cheat::WinHooks
         if (GCheat->GameInputPrevented)
             return 0;
 
-        return GCheat->GetKeyStateHook.stdcall<SHORT, int>(vKey);
+        return GCheat->GetKeyStateHook.unsafe_stdcall<SHORT, int>(vKey);
     }
 
     static BOOL WINAPI Hooked_GetKeyboardState(PBYTE lpKeyState)
     {
-        BOOL result = GCheat->GetKeyboardStateHook.stdcall<BOOL, PBYTE>(lpKeyState);
+        BOOL result = GCheat->GetKeyboardStateHook.unsafe_stdcall<BOOL, PBYTE>(lpKeyState);
 
         if (GCheat->GameInputPrevented)
             memset(lpKeyState, 0, 256);
@@ -170,7 +170,7 @@ namespace Cheat::WinHooks
 
     static BOOL WINAPI Hooked_PeekMessageA(LPMSG lpMsg, HWND  hWnd, UINT  wMsgFilterMin, UINT  wMsgFilterMax, UINT  wRemoveMsg)
     {
-        if (!GCheat->PeekMessageAHook.stdcall<BOOL, LPMSG, HWND, UINT, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg))
+        if (!GCheat->PeekMessageAHook.unsafe_stdcall<BOOL, LPMSG, HWND, UINT, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg))
             return FALSE;
 
         if (lpMsg != nullptr)
@@ -181,7 +181,7 @@ namespace Cheat::WinHooks
 
     static BOOL WINAPI Hooked_PeekMessageW(LPMSG lpMsg, HWND  hWnd, UINT  wMsgFilterMin, UINT  wMsgFilterMax, UINT  wRemoveMsg)
     {
-        if (!GCheat->PeekMessageWHook.stdcall<BOOL, LPMSG, HWND, UINT, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg))
+        if (!GCheat->PeekMessageWHook.unsafe_stdcall<BOOL, LPMSG, HWND, UINT, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg))
             return FALSE;
 
         if (lpMsg != nullptr)
@@ -192,7 +192,7 @@ namespace Cheat::WinHooks
 
     static BOOL WINAPI Hooked_GetMessageW(LPMSG lpMsg, HWND  hWnd, UINT wMsgFilterMin, UINT  wMsgFilterMax)
     {
-        if (!GCheat->GetMessageWHook.stdcall<BOOL, LPMSG, HWND, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax))
+        if (!GCheat->GetMessageWHook.unsafe_stdcall<BOOL, LPMSG, HWND, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax))
             return FALSE;
 
         if (lpMsg != nullptr)
@@ -203,7 +203,7 @@ namespace Cheat::WinHooks
 
     static BOOL WINAPI Hooked_GetMessageA(LPMSG lpMsg, HWND  hWnd, UINT wMsgFilterMin, UINT  wMsgFilterMax)
     {
-        if (!GCheat->GetMessageAHook.stdcall<BOOL, LPMSG, HWND, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax))
+        if (!GCheat->GetMessageAHook.unsafe_stdcall<BOOL, LPMSG, HWND, UINT, UINT>(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax))
             return FALSE;
 
         if (lpMsg != nullptr)
@@ -217,7 +217,7 @@ namespace Cheat::WinHooks
         Hax::Log(GCheat->LogFile, L"Saving ini...");
         Hax::IniSave(GCheat->IniFile);
 
-        return GCheat->TerminateProcessHook.stdcall<BOOL, HANDLE, UINT>(handle, exitCode);
+        return GCheat->TerminateProcessHook.unsafe_stdcall<BOOL, HANDLE, UINT>(handle, exitCode);
     }
 
     static void OpenMenu()

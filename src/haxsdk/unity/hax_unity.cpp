@@ -94,7 +94,6 @@ namespace Hax::Unity
         }
 
         out = System::AppDomain::GetCurrent().Load(classInfo.Assembly).GetType(classInfo.Namespace, classInfo.Name).GetField(fieldName).GetOffset();
-        printf("%s %d\n", fieldName, out);
     }
 
     static void RequestStaticField(void*& out, const ClassInfo& classInfo, const char* fieldName)
@@ -125,7 +124,6 @@ namespace Hax::Unity
         }
 
         out = System::AppDomain::GetCurrent().Load(enumInfo.Assembly).GetType(enumInfo.Namespace, enumInfo.Name).GetField(literalName).GetEnumValue();
-        printf("%s %d\n", literalName, out);
     }
 
     static void RequestMethod(System::MethodInfo& out, const ClassInfo& classInfo, const char* name, const char* sig)

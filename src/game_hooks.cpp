@@ -64,6 +64,7 @@ namespace Cheat::GameHooks
         HOOK(FlashlightController::s_Update.m_Pointer, FlashlightController_Update);
         HOOK(ItemUpgrade::s_Update.m_Pointer, ItemUpgrade_Update);
         HOOK(ItemHealthPack::s_Update.m_Pointer, ItemHealthPack_Update);
+
         HOOK(PhysGrabObject::s_PhysicsGrabbingManipulation.m_Pointer, PhysGrabObject_PhysicsGrabbingManipulation);
         HOOK(PostProcessLayer_BuildCommandBuffers.m_Pointer, PostProcessLayer_BuildCommandBuffers);
         HOOK(PlayerAvatarVisuals::s_Update.m_Pointer, PlayerAvatarVisuals_Update);
@@ -178,10 +179,10 @@ namespace Cheat::GameHooks
                 }
             }
 
-            if (EnemyDirector dir = EnemyDirector::instance())
+            /*if (EnemyDirector dir = EnemyDirector::instance())
             {
                 dir.debugNoVision() = GCheat->Blind;
-            }
+            }*/
 
             if (!GCheat->CommandBuffer)
             {
@@ -323,6 +324,12 @@ namespace Cheat::GameHooks
                     Hax::LogDebug(GCheat->LogFile, L"Chat changed");
                 }
                 GCheat->PreferedChat = ChatPref::None;
+            }
+
+            if (GCheat->UnlockAllCosmetic && MetaManager::instance())
+            {
+                GCheat->UnlockAllCosmetic = false;
+                MetaManager::instance().CosmeticUnlockAll();
             }
 
             /*for (size_t i = 0; i < GCheat->LoadRequests.size(); ++i)
@@ -756,9 +763,11 @@ namespace Cheat::GameHooks
             if (GameManager gm = GameManager::instance())
             {
                 PlayerAvatar avatar = __this.playerAvatar();
-                if (avatar && !__this.isMenuAvatar() && avatar.isLocal())
+                if (GCheat->ThirdPerson && avatar && !__this.isMenuAvatar() && avatar.isLocal())
                 {
-                    UnityEngine::GameObject go = __this.meshParent();
+                    __this.showSelfOverrideTimer() = Hax::Max(0.1f, __this.showSelfOverrideTimer());
+
+                    /*UnityEngine::GameObject go = __this.meshParent();
                     if (go.GetActiveSelf() != GCheat->ThirdPerson)
                     {
                         go.SetActive(GCheat->ThirdPerson);
@@ -776,19 +785,17 @@ namespace Cheat::GameHooks
                     {
                         mode = 1;
                         avatar.photonView().IsMine() = false;
-                    }
+                    }*/
 
-                    GCheat->PlayerAvatarVisuals_Update_Hook.unsafe_call<void, PlayerAvatarVisuals>(__this);
+                    //GCheat->PlayerAvatarVisuals_Update_Hook.unsafe_call<void, PlayerAvatarVisuals>(__this);
 
-                    if (GCheat->ThirdPerson)
+                    /*if (GCheat->ThirdPerson)
                     {
                         __this.GetTransform().SetPosition(avatar.GetTransform().GetPosition());
                         __this.GetTransform().SetRotation(avatar.GetTransform().GetRotation());
                         avatar.photonView().IsMine() = true;
                         mode = prevMode;
-                    }
-
-                    return;
+                    }*/
                 }
             }
         }
@@ -875,9 +882,9 @@ namespace Cheat::GameHooks
         {
             if (GCheat->InfBattery && __this.batteryLifeInt() < __this.batteryBars() && __this.physGrabObject().grabbedLocal())
             {
-                g_PretendMaster = true;
+                //g_PretendMaster = true;
                 __this.BatteryFullPercentChange(__this.batteryBars(), false);
-                g_PretendMaster = false;
+                //g_PretendMaster = false;
             }
         }
         catch (System::Exception& ex)
@@ -1101,6 +1108,7 @@ namespace Cheat::GameHooks
         if (!GCheat->EnemiesPool.Empty() || !dir)
             return;
 
+        Hax::LogDebug(GCheat->LogFile, L"Parsing enemies");
         //GCheat->LoadRequests.reserve(50);
 
         System::List<EnemySetup> setups[3] = {dir.enemiesDifficulty1(), dir.enemiesDifficulty2(), dir.enemiesDifficulty3()};
@@ -1126,7 +1134,7 @@ namespace Cheat::GameHooks
                     if (!entry)
                     {
                         entry = setup;
-                        //UVM::GCHandleNew(*name.GetPtr(), true);
+                        UVM::GCHandleNew(*name.GetPtr(), true);
                         Hax::LogDebug(GCheat->LogFile, L"Enemy parsed %ls", enemyName.begin());
                     }
                 }
@@ -1171,6 +1179,8 @@ namespace Cheat::GameHooks
     {
         if (RunManager manager = RunManager::instance())
         {
+            Hax::LogDebug(GCheat->LogFile, L"Parsing levels");
+
             System::List<Level> levels = manager.levels();
             GCheat->LevelsBan.Reserve(levels.GetCount());
 

@@ -73,7 +73,7 @@ namespace Cheat
 
     static void* Hooked_MonoRuntimeInvoke(UVM::Method* a1, void* a2, void* a3, void* a4)
     {
-        void* ret = GCheat->MonoRuntimeInvokeHook.call<void*, void*, void*, void*, void*>(a1, a2, a3, a4);
+        void* ret = GCheat->MonoRuntimeInvokeHook.unsafe_fastcall<void*, void*, void*, void*, void*>(a1, a2, a3, a4);
 
         Hax::StringView methodName = UVM::MethodGetName(*a1);
         if (methodName == "Update")

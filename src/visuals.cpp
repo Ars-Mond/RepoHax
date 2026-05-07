@@ -90,6 +90,7 @@ namespace Cheat::Visuals
     X(LocKey_LaserCrosshair, L"Laser crosshair", L"Лазерный прицел") \
     X(LocKey_SPAWN, L"SPAWN", L"СПАВН") \
     X(LocKey_TRUCK, L"TRUCK", L"ФУРГОН") \
+    X(LocKey_COSMETICS, L"COSMETICS", L"КОСМЕТИКА") \
     X(LocKey_TeleportTruck, L"Teleport to truck", L"Телепортироваться в фургон") \
     X(LocKey_SETTINGS, L"SETTINGS", L"НАСТРОЙКИ") \
     X(LocKey_Language, L"Language", L"Язык") \
@@ -111,7 +112,8 @@ namespace Cheat::Visuals
     X(LocKey_Small, L"Small", L"Маленькая") \
     X(LocKey_Medium, L"Medium", L"Средняя") \
     X(LocKey_Large, L"Large", L"Большая") \
-    X(LocKey_Unknown, L"Unknown", L"Неизвестное")
+    X(LocKey_Unknown, L"Unknown", L"Неизвестное") \
+    X(LocKey_UnlockAll, L"Unlock all", L"Открыть все")
 
     enum LocKey 
     {
@@ -375,8 +377,9 @@ namespace Cheat::Visuals
 
         GCheat->NoGrabMaxTime &= !GCheat->IsClient;
         GCheat->Unbreakable &= !GCheat->IsClient;
-        GCheat->Blind &= !GCheat->IsClient;
+        //GCheat->Blind &= !GCheat->IsClient;
         GCheat->EasyGrab &= !GCheat->IsClient;
+        GCheat->InfBattery &= !GCheat->IsClient;
 
         if (GCheat->LoopSystem.Initialized && !GCheat->LoopSystem.Hooked)
         {
@@ -861,8 +864,8 @@ namespace Cheat::Visuals
                 }
                 Hax::Gui::EndHorizontal();
 
-                Widgets::HorizontalLine(1_px);
-                Widgets::ToggleEx(HAX_LINE, GCheat->Blind, g_Loc[LocKey_CantSeePlayers], g_Loc[LocKey_AvailableIfHost], {.Disabled = GCheat->IsClient});
+               /* Widgets::HorizontalLine(1_px);
+                Widgets::ToggleEx(HAX_LINE, GCheat->Blind, g_Loc[LocKey_CantSeePlayers], g_Loc[LocKey_AvailableIfHost], {.Disabled = GCheat->IsClient});*/
                 Widgets::HorizontalLine(1_px);
                 Widgets::ToggleEx(HAX_LINE, GCheat->NoGrabMaxTime, g_Loc[LocKey_NoGrabLimit], g_Loc[LocKey_AvailableIfHost], {.Disabled = GCheat->IsClient});
                 Widgets::HorizontalLine(1_px);
@@ -909,7 +912,7 @@ namespace Cheat::Visuals
 
                     Hax::Gui::BeginVertical(5_px);
                     {
-                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Tumble], {}, {.Enabled = GCheat->IsInGame && s_SelectedPlayer && !s_SelectedPlayer.isDisabled(), .MinW = w}))
+                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Tumble], g_Loc[LocKey_HostOnly], {.Enabled = GCheat->IsInGame && !GCheat->IsClient && s_SelectedPlayer && !s_SelectedPlayer.isDisabled(), .MinW = w}))
                             GCheat->ToTumble = s_SelectedPlayer;
 
                         Hax::Gui::BeginHorizontal(5_px);
@@ -1107,9 +1110,9 @@ namespace Cheat::Visuals
                     Hax::Gui::BeginHorizontal(5_px);
                     {
                         const float w = Widgets::CalcWidgetEqWidth(2);
-                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_ToZero], {}, {.Enabled = GCheat->IsInGame, .MinW = w}))
+                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_ToZero], g_Loc[LocKey_HostOnly], {.Enabled = GCheat->IsInGame && !GCheat->IsClient, .MinW = w}))
                             GCheat->SetToZero = true;
-                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_ToMax], {}, {.Enabled = GCheat->IsInGame, .MinW = w}))
+                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_ToMax], g_Loc[LocKey_HostOnly], {.Enabled = GCheat->IsInGame  && !GCheat->IsClient, .MinW = w}))
                             GCheat->SetToMax = true;
                     }
                     Hax::Gui::EndHorizontal();
@@ -1164,7 +1167,8 @@ namespace Cheat::Visuals
             Widgets::PanelHeader(g_Loc[LocKey_GUNS]);
             {
                 {
-                    Widgets::ToggleEx(HAX_LINE, GCheat->InfBattery, g_Loc[LocKey_MaxBatteryGun]);
+                    bool enabled = !GCheat->IsClient;
+                    Widgets::ToggleEx(HAX_LINE, GCheat->InfBattery, g_Loc[LocKey_MaxBatteryGun], g_Loc[LocKey_HostOnly], {.Disabled = !enabled});
                 }
 
                 Widgets::HorizontalLine(1_px);
@@ -1358,6 +1362,14 @@ namespace Cheat::Visuals
                     if (Widgets::Button(HAX_LINE, g_Loc[LocKey_TeleportTruck], {}, {.Enabled = !disabled, .MinW = Hax::Gui::GetContentRegionAvail().X}))
                         GCheat->TeleportToTruck = true;
                 }
+            }
+            Widgets::EndPanel();
+
+            Widgets::BeginPanel(HAX_LINE);
+            Widgets::PanelHeader(g_Loc[LocKey_COSMETICS]);
+            {
+                if (Widgets::Button(HAX_LINE, g_Loc[LocKey_UnlockAll], {}, {.MinW = Hax::Gui::GetContentRegionAvail().X}))
+                    GCheat->UnlockAllCosmetic = true;
             }
             Widgets::EndPanel();
         }

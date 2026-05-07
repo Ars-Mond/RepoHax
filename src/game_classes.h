@@ -463,6 +463,7 @@ struct PlayerAvatarVisuals : UnityEngine::MonoBehaviour
     FIELD(animator, UnityEngine::Behaviour);
     FIELD(headSideTransform, UnityEngine::Transform);
     FIELD(legTwistTransform, UnityEngine::Transform);
+    FIELD(showSelfOverrideTimer, float);
 
     METHOD(Update);
 };
@@ -903,6 +904,23 @@ struct PlayerDeathHead : UnityEngine::MonoBehaviour
     FIELD(colliders, System::Array<UnityEngine::Collider>);
     FIELD(meshRenderers, System::List<UnityEngine::MeshRenderer>);
     FIELD(eyeRenderers, System::Array<UnityEngine::MeshRenderer>);
+};
+
+struct MetaManager : UnityEngine::MonoBehaviour
+{
+    META("Assembly-CSharp", "", "MetaManager");
+
+    inline operator bool() const { return !null(); }
+
+    void CosmeticUnlockAll()
+    {
+        THROW_IF_NULL();
+        s_CosmeticUnlockAll.CallThunk<bool, MetaManager>(*this);
+    }
+
+    STATIC_FIELD(instance, MetaManager);
+private:
+    METHOD(CosmeticUnlockAll);
 };
 
 static inline System::MethodInfo EventSystem_Update{{"UnityEngine.UI", "UnityEngine.EventSystems", "EventSystem"}, "Update"};
