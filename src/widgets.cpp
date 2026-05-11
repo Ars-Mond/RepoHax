@@ -1,3 +1,4 @@
+#define HAXGUI_INCLUDE_INTERNAL
 #include "widgets.h"
 #include "cheat.h"
 
@@ -1017,6 +1018,26 @@ namespace Cheat::Widgets
         Hax::Rect textBounds;
         textBounds.Min = bounds.Min + padding;
         textBounds.Max = bounds.Max - padding;
+
+        if (focused && params.Filter != TextInputFilter::Any)
+        {
+            auto& chars = Hax::Gui::g_Context->CharsPressedThisFrame;
+            size_t write = 0;
+            for (size_t i = 0; i < chars.Size(); ++i)
+            {
+                Hax::char16 c = chars[i];
+                bool valid = false;
+                if (c >= L'0' && c <= L'9')
+                    valid = true;
+                else if (c == L'-')
+                    valid = true;
+                else if (params.Filter == TextInputFilter::Float && c == L'.')
+                    valid = true;
+                if (valid)
+                    chars[write++] = c;
+            }
+            chars.Resize(write);
+        }
 
         Hax::Gui::StringEditParams sep{};
         sep.Hint = params.Hint;
