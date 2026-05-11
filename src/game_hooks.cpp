@@ -293,6 +293,39 @@ namespace Cheat::GameHooks
                     avatar.playerTransform().SetPosition(TruckSafetySpawnPoint::instance().GetTransform().GetPosition());
             }
 
+            if (GCheat->TeleportFarthestBox)
+            {
+                GCheat->TeleportFarthestBox = false;
+                if (avatar && !avatar.deadSet())
+                {
+                    if (RoundDirector dir = RoundDirector::instance())
+                    {
+                        UnityEngine::Vector3 playerPos = avatar.playerTransform().GetPosition();
+                        CosmeticWorldObject farthest;
+                        float maxDist = -1.f;
+                        for (CosmeticWorldObject box : dir.cosmeticWorldObjects())
+                        {
+                            if (!box)
+                                continue;
+                            float dist = playerPos.Distance(box.GetTransform().GetPosition());
+                            if (dist > maxDist)
+                            {
+                                maxDist = dist;
+                                farthest = box;
+                            }
+                        }
+                        if (farthest)
+                        {
+                            UnityEngine::Camera cam = SemiFunc::MainCamera();
+                            UnityEngine::Vector3 dropPos = cam
+                                ? cam.GetTransform().GetPosition() + cam.GetTransform().GetForward() * 2.f - cam.GetTransform().GetUp()
+                                : playerPos;
+                            farthest.GetTransform().SetPosition(dropPos);
+                        }
+                    }
+                }
+            }
+
             if (GCheat->ToTumble)
             {
                 PlayerAvatar player = GCheat->ToTumble;

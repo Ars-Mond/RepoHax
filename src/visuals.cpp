@@ -120,7 +120,8 @@ namespace Cheat::Visuals
     X(LocKey_RarityRare, L"Rare", L"Редкая") \
     X(LocKey_RarityUltraRare, L"Ultra rare", L"Очень редкая") \
     X(LocKey_RemoveCosmeticLimit, L"Remove extraction limit", L"Снять лимит выноса") \
-    X(LocKey_EnableBeforeLevel, L"Enable before entering a level", L"Включать до входа в уровень")
+    X(LocKey_EnableBeforeLevel, L"Enable before entering a level", L"Включать до входа в уровень") \
+    X(LocKey_TeleportFarthestBox, L"Teleport farthest box", L"Телепортировать дальнюю коробку")
 
     enum LocKey 
     {
@@ -1381,6 +1382,14 @@ namespace Cheat::Visuals
                 Widgets::HorizontalLine(1_px);
 
                 Widgets::ToggleEx(HAX_LINE, GCheat->RemoveCosmeticLimit, g_Loc[LocKey_RemoveCosmeticLimit], g_Loc[LocKey_EnableBeforeLevel]);
+
+                Widgets::HorizontalLine(1_px);
+
+                {
+                    bool enabled = !GCheat->IsClient && GCheat->IsInGame;
+                    if (Widgets::Button(HAX_LINE, g_Loc[LocKey_TeleportFarthestBox], {}, {.Enabled = enabled, .MinW = Hax::Gui::GetContentRegionAvail().X}))
+                        GCheat->TeleportFarthestBox = true;
+                }
 
                 Widgets::HorizontalLine(1_px);
 

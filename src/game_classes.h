@@ -863,6 +863,18 @@ private:
     METHOD(OnClick);
 };
 
+struct CosmeticWorldObject : UnityEngine::MonoBehaviour
+{
+    META("Assembly-CSharp", "", "CosmeticWorldObject");
+
+    CosmeticWorldObject() : UnityEngine::MonoBehaviour(nullptr) {}
+    CosmeticWorldObject(UVM::Object* ptr) : UnityEngine::MonoBehaviour(ptr) {}
+
+    inline operator bool() const { return !null(); }
+
+    FIELD(rarity, int);
+};
+
 struct RoundDirector : UnityEngine::MonoBehaviour
 {
     META("Assembly-CSharp", "", "RoundDirector");
@@ -882,6 +894,7 @@ struct RoundDirector : UnityEngine::MonoBehaviour
     FIELD(extractionPointActive, bool);
     FIELD(extractionPointCurrent, ExtractionPoint);
     FIELD(extractionPointList, System::List<UnityEngine::GameObject>);
+    FIELD(cosmeticWorldObjects, System::List<CosmeticWorldObject>);
 
 private:
     METHOD(ExtractionPointsUnlock);
