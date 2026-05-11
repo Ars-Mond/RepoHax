@@ -121,7 +121,8 @@ namespace Cheat::Visuals
     X(LocKey_RarityUltraRare, L"Ultra rare", L"Очень редкая") \
     X(LocKey_RemoveCosmeticLimit, L"Remove extraction limit", L"Снять лимит выноса") \
     X(LocKey_EnableBeforeLevel, L"Enable before entering a level", L"Включать до входа в уровень") \
-    X(LocKey_TeleportFarthestBox, L"Teleport farthest box", L"Телепортировать дальнюю коробку")
+    X(LocKey_TeleportFarthestBox, L"Teleport farthest box", L"Телепортировать дальнюю коробку") \
+    X(LocKey_CosmeticBoxesEsp, L"Cosmetic boxes ESP", L"Подсветка коробок")
 
     enum LocKey 
     {
@@ -255,6 +256,7 @@ namespace Cheat::Visuals
     static void DrawExtrPointEsp(ExtrPointEspData& data);
     static void DrawTruckEsp(TruckEspData& data);
     static void DrawPlayerEsp(PlayerEspData& data);
+    static void DrawCosmeticBoxEsp(CosmeticBoxEspData& data);
     //static void CornerBox(float x, float y, float width, float height, const Hax::Gui::Color& color, float thickness, float cornerProp);
     static void Box(const Hax::Rect& rect, const Hax::Gui::Color& col);
     static void VertHealthBar(float x, float y, float width, float height, float cur, float max);
@@ -1385,6 +1387,10 @@ namespace Cheat::Visuals
 
                 Widgets::HorizontalLine(1_px);
 
+                Widgets::ToggleEx(HAX_LINE, GCheat->CosmeticBoxesEsp, g_Loc[LocKey_CosmeticBoxesEsp], g_Loc[LocKey_DisplayThroughWalls]);
+
+                Widgets::HorizontalLine(1_px);
+
                 {
                     bool enabled = !GCheat->IsClient && GCheat->IsInGame;
                     if (Widgets::Button(HAX_LINE, g_Loc[LocKey_TeleportFarthestBox], {}, {.Enabled = enabled, .MinW = Hax::Gui::GetContentRegionAvail().X}))
@@ -1526,29 +1532,37 @@ namespace Cheat::Visuals
         if (GCheat->PlayersEsp)
             std::sort(buf5.begin(), buf5.end(), [](const PlayerEspData& d1, const PlayerEspData& d2) { return d1.Distance > d2.Distance; });
 
+        Hax::Vector<CosmeticBoxEspData>& buf6 = GCheat->CosmeticBoxesEspBuffer.GetFront();
+        if (GCheat->CosmeticBoxesEsp)
+            std::sort(buf6.begin(), buf6.end(), [](const CosmeticBoxEspData& d1, const CosmeticBoxEspData& d2) { return d1.Distance > d2.Distance; });
+
         size_t i1 = GCheat->EnemiesEsp ? 0 : 9999;
         size_t i2 = GCheat->ValuablesEsp ? 0 : 9999;
         size_t i3 = GCheat->ExtrPointsEsp ? 0 : 9999;
         size_t i4 = GCheat->TruckEsp ? 0 : 9999;
         size_t i5 = GCheat->PlayersEsp ? 0 : 9999;
-        while (i1 < buf1.Size() || i2 < buf2.Size() || i3 < buf3.Size() || i4 < buf4.Size() || i5 < buf5.Size())
+        size_t i6 = GCheat->CosmeticBoxesEsp ? 0 : 9999;
+        while (i1 < buf1.Size() || i2 < buf2.Size() || i3 < buf3.Size() || i4 < buf4.Size() || i5 < buf5.Size() || i6 < buf6.Size())
         {
             float d1 = i1 < buf1.Size() ? buf1[i1].Distance : FLT_MIN;
             float d2 = i2 < buf2.Size() ? buf2[i2].Distance : FLT_MIN;
             float d3 = i3 < buf3.Size() ? buf3[i3].Distance : FLT_MIN;
             float d4 = i4 < buf4.Size() ? buf4[i4].Distance : FLT_MIN;
             float d5 = i5 < buf5.Size() ? buf5[i5].Distance : FLT_MIN;
+            float d6 = i6 < buf6.Size() ? buf6[i6].Distance : FLT_MIN;
 
-            if (d1 >= d2 && d1 >= d3 && d1 >= d4 && d1 >= d5)
+            if (d1 >= d2 && d1 >= d3 && d1 >= d4 && d1 >= d5 && d1 >= d6)
                 DrawEnemyEsp(buf1[i1++]);
-            else if (d2 >= d1 && d2 >= d3 && d2 >= d4 && d2 >= d5)
+            else if (d2 >= d1 && d2 >= d3 && d2 >= d4 && d2 >= d5 && d2 >= d6)
                 DrawValuableEsp(buf2[i2++]);
-            else if (d3 >= d1 && d3 >= d2 && d3 >= d4 && d3 >= d5)
+            else if (d3 >= d1 && d3 >= d2 && d3 >= d4 && d3 >= d5 && d3 >= d6)
                 DrawExtrPointEsp(buf3[i3++]);
-            else if (d4 >= d1 && d4 >= d2 && d4 >= d3 && d4 >= d5)
+            else if (d4 >= d1 && d4 >= d2 && d4 >= d3 && d4 >= d5 && d4 >= d6)
                 DrawTruckEsp(buf4[i4++]);
-            else
+            else if (d5 >= d1 && d5 >= d2 && d5 >= d3 && d5 >= d4 && d5 >= d6)
                 DrawPlayerEsp(buf5[i5++]);
+            else
+                DrawCosmeticBoxEsp(buf6[i6++]);
         }
     }
 
@@ -1594,6 +1608,37 @@ namespace Cheat::Visuals
     {
         Hax::Gui::Color color = 0x00FF00FF;
         Text(GCheat->Icons_Solid, L"\uF0D1", data.Pos, color, IconFontSize());
+    }
+
+    static void DrawCosmeticBoxEsp(CosmeticBoxEspData& data)
+    {
+        static constexpr Hax::Gui::Color rarityColors[] = {
+            0xBFBFBFFF,   // Common  - light gray
+            0x4DE94CFF,   // Uncommon - green
+            0x4D9CFFFF,   // Rare    - blue
+            0xC44DFFFF,   // UltraRare - purple
+        };
+        static constexpr Hax::WStringView rarityLabels[] = {
+            L"Common",
+            L"Uncommon",
+            L"Rare",
+            L"Ultra rare",
+        };
+
+        int r = data.Rarity;
+        if (r < 0 || r >= (int)_countof(rarityColors))
+            r = 0;
+
+        Hax::Gui::Color color = rarityColors[r];
+
+        wchar_t buf[48] = {};
+        if (swprintf_s(buf, L"%.*ls | %.0fm", (int)rarityLabels[r].Length(), rarityLabels[r].begin(), data.Distance) > 0)
+        {
+            Text(GCheat->NunitoSans_Bold, buf, data.Pos, color, EspFontSize(), VerticalAlignment_Bottom, HorizontalAlignment_Center);
+            return;
+        }
+
+        Text(GCheat->NunitoSans_Bold, rarityLabels[r], data.Pos, color, EspFontSize(), VerticalAlignment_Bottom, HorizontalAlignment_Center);
     }
 
     static void DrawPlayerEsp(PlayerEspData& data)

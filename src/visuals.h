@@ -52,6 +52,13 @@ namespace Cheat::Visuals
         float Distance;
     };
 
+    struct CosmeticBoxEspData
+    {
+        Hax::Vector2 Pos;
+        float Distance;
+        int Rarity;
+    };
+
     void InitializeMenu(Hax::Handle hDirectX11);
     bool IsUpgrAutouse(void* assetName);
 }

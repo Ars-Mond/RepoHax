@@ -49,6 +49,7 @@ namespace Cheat::GameHooks
     static Hax::Optional<Visuals::ValuableEspData> ParseValuableEspData(ValuableObject obj);
     static Hax::Optional<Visuals::ExtrPointEspData> ParseExtrPointEspData(UnityEngine::GameObject obj);
     static Hax::Optional<Visuals::TruckEspData> ParseTruckEspData(TruckSafetySpawnPoint truck);
+    static Hax::Optional<Visuals::CosmeticBoxEspData> ParseCosmeticBoxEspData(CosmeticWorldObject box);
     static Hax::Optional<Visuals::PlayerEspData> ParsePlayerEspData(PlayerAvatar avatar);
     static UnityEngine::Rect CalcBoundsInScreenSpace(UnityEngine::Bounds bigBounds, UnityEngine::Camera cam);
 
@@ -711,6 +712,22 @@ namespace Cheat::GameHooks
                             }
                         }
                         GCheat->PlayersEspBuffer.RefreshSpare();
+                    }
+
+                    if (GCheat->CosmeticBoxesEsp)
+                    {
+                        auto& back = GCheat->CosmeticBoxesEspBuffer.GetBack();
+                        back.Clear();
+                        if (RoundDirector dir = RoundDirector::instance())
+                        {
+                            for (CosmeticWorldObject box : dir.cosmeticWorldObjects())
+                            {
+                                Hax::Optional<Visuals::CosmeticBoxEspData> data = ParseCosmeticBoxEspData(box);
+                                if (data.HasValue())
+                                    back.PushBack(*data);
+                            }
+                        }
+                        GCheat->CosmeticBoxesEspBuffer.RefreshSpare();
                     }
                 }
             }
@@ -1454,6 +1471,38 @@ namespace Cheat::GameHooks
         Visuals::TruckEspData data{};
         data.Pos = screenPos.ToVector2().ToHax();
         data.Distance = dist;
+
+        return data;
+    }
+
+    static Hax::Optional<Visuals::CosmeticBoxEspData> ParseCosmeticBoxEspData(CosmeticWorldObject box)
+    {
+        UnityEngine::Camera cam = GameDirector::instance().MainCamera();
+
+        if (!box || !cam)
+            return {};
+
+        UnityEngine::Vector3 worldPos = box.GetTransform().GetPosition();
+
+        float dist = cam.GetTransform().GetPosition().Distance(worldPos);
+        if (dist < 1.f)
+            return {};
+
+        UnityEngine::Vector3 screenPos = cam.WorldToScreenPoint(worldPos);
+        UnityEngine::Rect screenRect{0.f, 0.f, GCheat->ScreenWidth, GCheat->ScreenHeight};
+        if (screenPos.z <= 0 || !screenRect.Contains(screenPos))
+            return {};
+
+        float scaleX = GCheat->ScreenWidth / GCheat->PixelWidth;
+        float scaleY = GCheat->ScreenHeight / GCheat->PixelHeight;
+
+        screenPos.x *= scaleX;
+        screenPos.y = GCheat->ScreenHeight - screenPos.y * scaleY;
+
+        Visuals::CosmeticBoxEspData data{};
+        data.Pos = screenPos.ToVector2().ToHax();
+        data.Distance = dist;
+        data.Rarity = box.rarity();
 
         return data;
     }

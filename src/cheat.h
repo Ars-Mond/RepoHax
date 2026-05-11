@@ -238,6 +238,9 @@ namespace Cheat
         int CosmeticBoxToSpawn = -1;
         bool RemoveCosmeticLimit;
         bool TeleportFarthestBox;
+
+        bool CosmeticBoxesEsp;
+        Hax::TripleBuffer<Visuals::CosmeticBoxEspData> CosmeticBoxesEspBuffer{20};
     };
 
     inline Context* GCheat;
