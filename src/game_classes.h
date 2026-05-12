@@ -850,8 +850,38 @@ struct StatsManager : UnityEngine::MonoBehaviour
 
     inline operator bool() const { return !null(); }
 
+    int GetRunStatCurrency()
+    {
+        THROW_IF_NULL();
+        return s_GetRunStatCurrency.CallThunk<int, StatsManager>(*this);
+    }
+
     STATIC_FIELD(instance, StatsManager);
     FIELD(itemDictionary, System::Dictionary<System::String COMMA Item>);
+
+private:
+    METHOD(GetRunStatCurrency);
+};
+
+struct PunManager : UnityEngine::MonoBehaviour
+{
+    META("Assembly-CSharp", "", "PunManager");
+
+    PunManager() : UnityEngine::MonoBehaviour(nullptr) {}
+    PunManager(UVM::Object* ptr) : UnityEngine::MonoBehaviour(ptr) {}
+
+    inline operator bool() const { return !null(); }
+
+    int SetRunStatSet(System::String statName, int value)
+    {
+        THROW_IF_NULL();
+        return s_SetRunStatSet.CallThunk<int, PunManager, System::String, int>(*this, statName, value);
+    }
+
+    STATIC_FIELD(instance, PunManager);
+
+private:
+    METHOD(SetRunStatSet);
 };
 
 struct ExtractionPoint : UnityEngine::MonoBehaviour

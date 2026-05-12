@@ -383,6 +383,13 @@ namespace Cheat::GameHooks
                 MetaManager::instance().CosmeticUnlockAll();
             }
 
+            if (GCheat->SetCurrency)
+            {
+                GCheat->SetCurrency = false;
+                if (PunManager pm = PunManager::instance())
+                    pm.SetRunStatSet(System::String::New("currency"), GCheat->CurrencyToSet);
+            }
+
             if (GCheat->CosmeticBoxToSpawn >= 0)
             {
                 int rarity = GCheat->CosmeticBoxToSpawn;

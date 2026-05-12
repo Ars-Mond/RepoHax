@@ -124,7 +124,11 @@ namespace Cheat::Visuals
     X(LocKey_TeleportFarthestBox, L"Teleport farthest box", L"Телепортировать дальнюю коробку") \
     X(LocKey_CosmeticBoxesEsp, L"Cosmetic boxes ESP", L"Подсветка коробок") \
     X(LocKey_StartingValue, L"Starting value", L"Начальная цена") \
-    X(LocKey_ValueHint, L"e.g. 1000 (0 = random)", L"например 1000 (0 = случайно)")
+    X(LocKey_ValueHint, L"e.g. 1000 (0 = random)", L"например 1000 (0 = случайно)") \
+    X(LocKey_CURRENCY, L"CURRENCY", L"ДЕНЬГИ") \
+    X(LocKey_Current, L"Current", L"Текущее") \
+    X(LocKey_Set, L"Set", L"Установить") \
+    X(LocKey_CurrencyHint, L"e.g. 99999", L"например 99999")
 
     enum LocKey 
     {
@@ -1507,6 +1511,49 @@ namespace Cheat::Visuals
                     }
                     Hax::Gui::EndHorizontal();
                 }
+            }
+            Widgets::EndPanel();
+        }
+        Hax::Gui::Dummy({0.f, 0.f});
+        Hax::Gui::EndVertical();
+        Hax::Gui::EndContainer();
+
+        // Column 2
+        Hax::Gui::Space(spacing);
+        Hax::Gui::BeginContainer(0, {.W = columnSize.X, .H = columnSize.Y});
+        Hax::Gui::BeginVertical(spacing);
+        Hax::Gui::Dummy({0.f, 0.f});
+        {
+            Widgets::BeginPanel(HAX_LINE);
+            Widgets::PanelHeader(g_Loc[LocKey_CURRENCY], g_Loc[LocKey_AvailableIfHost]);
+            {
+                StatsManager sm = StatsManager::instance();
+                int cur = sm ? sm.GetRunStatCurrency() : 0;
+                wchar_t curBuf[48] = {};
+                swprintf_s(curBuf, _countof(curBuf), L"%.*ls: $%dK",
+                    (int)g_Loc[LocKey_Current].Length(), g_Loc[LocKey_Current].begin(), cur);
+                Widgets::MainLabel(curBuf);
+
+                Widgets::HorizontalLine(1_px);
+
+                const float spacing2 = 5_px;
+                Hax::Vector2 setSz = Widgets::CalcButtonSize(g_Loc[LocKey_Set]);
+
+                Hax::Gui::BeginHorizontal(spacing2);
+                {
+                    float inputAvailW = Hax::Gui::GetContentRegionAvail().X - spacing2 - setSz.X;
+                    Widgets::TextInput(HAX_LINE, GCheat->CurrencyInputBuf, _countof(GCheat->CurrencyInputBuf),
+                        {.Hint = g_Loc[LocKey_CurrencyHint], .Filter = Widgets::TextInputFilter::Int,
+                         .MinW = inputAvailW / Hax::Gui::G.ScaleFactor});
+
+                    bool enabled = !GCheat->IsClient && GCheat->IsInGame && GCheat->CurrencyInputBuf[0] != L'\0';
+                    if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Set], {}, {.Enabled = enabled}))
+                    {
+                        GCheat->CurrencyToSet = _wtoi(GCheat->CurrencyInputBuf);
+                        GCheat->SetCurrency = true;
+                    }
+                }
+                Hax::Gui::EndHorizontal();
             }
             Widgets::EndPanel();
         }

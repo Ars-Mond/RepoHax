@@ -246,6 +246,10 @@ namespace Cheat
 
         bool CosmeticBoxesEsp;
         Hax::TripleBuffer<Visuals::CosmeticBoxEspData> CosmeticBoxesEspBuffer{20};
+
+        bool SetCurrency;
+        int CurrencyToSet;
+        wchar_t CurrencyInputBuf[16] = {};
     };
 
     inline Context* GCheat;
