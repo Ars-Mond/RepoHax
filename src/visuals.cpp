@@ -4,6 +4,7 @@
 #include "widgets.h"
 #include "game_classes.h"
 #include "game_hooks.h"
+#include "config.h"
 
 namespace Cheat
 {
@@ -130,7 +131,16 @@ namespace Cheat::Visuals
     X(LocKey_Set, L"Set", L"Установить") \
     X(LocKey_CurrencyHint, L"e.g. 99999", L"например 99999") \
     X(LocKey_FreezeExtract, L"Freeze auto-extract", L"Заморозить экстракт") \
-    X(LocKey_KillAllEnemies, L"Kill all enemies", L"Убить всех врагов")
+    X(LocKey_KillAllEnemies, L"Kill all enemies", L"Убить всех врагов") \
+    X(LocKey_PROFILE, L"PROFILE", L"ПРОФИЛЬ") \
+    X(LocKey_Profile, L"Profile", L"Профиль") \
+    X(LocKey_Load, L"Load", L"Загрузить") \
+    X(LocKey_Save, L"Save", L"Сохранить") \
+    X(LocKey_Delete, L"Delete", L"Удалить") \
+    X(LocKey_SaveAs, L"Save as", L"Сохранить как") \
+    X(LocKey_ProfileNameHint, L"profile name", L"имя профиля") \
+    X(LocKey_ResetDefaults, L"Reset to defaults", L"Сбросить настройки") \
+    X(LocKey_DefaultHint, L"Profile 'default' is auto-loaded on startup", L"Профиль 'default' грузится при запуске")
 
     enum LocKey 
     {
@@ -1621,6 +1631,126 @@ namespace Cheat::Visuals
                 {
                     Widgets::ToggleEx(HAX_LINE, GCheat->DarkenBg, g_Loc[LocKey_DarkenBackground]);
                 }
+            }
+            Widgets::EndPanel();
+        }
+        Hax::Gui::Dummy({0.f, 0.f});
+        Hax::Gui::EndVertical();
+        Hax::Gui::EndContainer();
+
+        // Column 2
+        Hax::Gui::Space(spacing);
+        Hax::Gui::BeginContainer(0, {.W = columnSize.X, .H = columnSize.Y});
+        Hax::Gui::BeginVertical(spacing);
+        Hax::Gui::Dummy({0.f, 0.f});
+        {
+            Widgets::BeginPanel(HAX_LINE);
+            Widgets::PanelHeader(g_Loc[LocKey_PROFILE], g_Loc[LocKey_DefaultHint]);
+            {
+                static bool s_ListInitialized = false;
+                static size_t s_Selected = 0;
+                static wchar_t s_NameBuf[64] = {};
+
+                if (!s_ListInitialized)
+                {
+                    Config::Refresh();
+                    s_ListInitialized = true;
+                }
+
+                const size_t nProfiles = Config::Count();
+                if (s_Selected >= nProfiles)
+                    s_Selected = nProfiles ? 0 : 0;
+
+                Widgets::MainLabel(g_Loc[LocKey_Profile]);
+
+                {
+                    const float spacing2 = 5_px;
+                    Hax::Vector2 sz = Widgets::CalcButtonSize(g_Loc[LocKey_Load]);
+                    Hax::Gui::BeginHorizontal(spacing2);
+                    {
+                        constexpr size_t dropListId = Hax::Hash(L"ProfileSelect");
+                        const float dropListW = Hax::Gui::GetContentRegionAvail().X - spacing2 - sz.X;
+
+                        Hax::Gui::BeginVertical(3_px);
+                        {
+                            Hax::WStringView preview = nProfiles ? Config::At(s_Selected) : Hax::WStringView(L"-");
+                            if (Widgets::DropdownBtn(HAX_LINE, preview, dropListW))
+                            {
+                                Config::Refresh();
+                                if (s_Selected >= Config::Count())
+                                    s_Selected = 0;
+                                Widgets::OpenPopup(dropListId, Hax::Gui::GetCursorPos());
+                            }
+                        }
+                        Hax::Gui::EndVertical();
+
+                        const float selectableH = Widgets::CalcButtonHeight();
+                        const float dropListH = selectableH * Hax::Max(1ULL, Hax::Min(Config::Count(), 8ULL)) + 5_px * 2.f + 1.f;
+                        if (Widgets::BeginDropList(dropListId, {dropListW, dropListH}))
+                        {
+                            for (size_t i = 0; i < Config::Count(); ++i)
+                            {
+                                if (Widgets::Selectable(HAX_LINE + i * 10000, Config::At(i), s_Selected == i, {.MinW = dropListW}))
+                                {
+                                    s_Selected = i;
+                                    Widgets::ClosePopup(dropListId);
+                                }
+                            }
+                            Widgets::EndDropList();
+                        }
+
+                        bool hasSel = s_Selected < Config::Count();
+                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Load], {}, {.Enabled = hasSel}))
+                            Config::Load(Config::At(s_Selected));
+                    }
+                    Hax::Gui::EndHorizontal();
+                }
+
+                {
+                    const float w = Widgets::CalcWidgetEqWidth(2);
+                    Hax::Gui::BeginHorizontal(5_px);
+                    bool hasSel = s_Selected < Config::Count();
+                    if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Save], {}, {.Enabled = hasSel, .MinW = w}))
+                        Config::Save(Config::At(s_Selected));
+                    if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Delete], {}, {.Enabled = hasSel, .MinW = w}))
+                    {
+                        Config::Delete(Config::At(s_Selected));
+                        Config::Refresh();
+                        if (s_Selected >= Config::Count())
+                            s_Selected = 0;
+                    }
+                    Hax::Gui::EndHorizontal();
+                }
+
+                Widgets::HorizontalLine(1_px);
+
+                Widgets::MainLabel(g_Loc[LocKey_SaveAs]);
+                {
+                    const float spacing2 = 5_px;
+                    Hax::Vector2 sz = Widgets::CalcButtonSize(g_Loc[LocKey_Save]);
+                    Hax::Gui::BeginHorizontal(spacing2);
+                    {
+                        Hax::Gui::BeginVertical(3_px);
+                        Widgets::TextInput(HAX_LINE, s_NameBuf, _countof(s_NameBuf),
+                            {.Hint = g_Loc[LocKey_ProfileNameHint],
+                             .MinW = Hax::Gui::GetContentRegionAvail().X - spacing2 - sz.X});
+                        Hax::Gui::EndVertical();
+
+                        bool enabled = s_NameBuf[0] != 0;
+                        if (Widgets::Button(HAX_LINE, g_Loc[LocKey_Save], {}, {.Enabled = enabled}))
+                        {
+                            Config::Save(s_NameBuf);
+                            Config::Refresh();
+                            s_NameBuf[0] = 0;
+                        }
+                    }
+                    Hax::Gui::EndHorizontal();
+                }
+
+                Widgets::HorizontalLine(1_px);
+
+                if (Widgets::Button(HAX_LINE, g_Loc[LocKey_ResetDefaults], {}, {.MinW = Hax::Gui::GetContentRegionAvail().X}))
+                    Config::ResetToDefaults();
             }
             Widgets::EndPanel();
         }

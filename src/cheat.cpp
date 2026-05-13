@@ -2,6 +2,7 @@
 
 #include "win_hooks.h"
 #include "game_hooks.h"
+#include "config.h"
 
 namespace Cheat
 {
@@ -52,6 +53,9 @@ namespace Cheat
 
         Cheat::Visuals::InitializeMenu((Hax::Handle)hDirectX11);
         Cheat::GameHooks::Install();
+
+        if (Cheat::Config::Exists(L"default"))
+            Cheat::Config::Load(L"default");
 
         return true;
     }
