@@ -241,6 +241,7 @@ namespace Cheat
         size_t TotalBans;
 
         bool UnlockAllCosmetic;
+        bool ResetCosmetic;
 
         int CosmeticBoxToSpawn = -1;
         bool RemoveCosmeticLimit;

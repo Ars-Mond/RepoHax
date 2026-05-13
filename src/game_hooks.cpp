@@ -406,6 +406,12 @@ namespace Cheat::GameHooks
                 MetaManager::instance().CosmeticUnlockAll();
             }
 
+            if (GCheat->ResetCosmetic && MetaManager::instance())
+            {
+                GCheat->ResetCosmetic = false;
+                MetaManager::instance().Reset();
+            }
+
             if (GCheat->SetCurrency)
             {
                 GCheat->SetCurrency = false;

@@ -115,6 +115,7 @@ namespace Cheat::Visuals
     X(LocKey_Large, L"Large", L"Большая") \
     X(LocKey_Unknown, L"Unknown", L"Неизвестное") \
     X(LocKey_UnlockAll, L"Unlock all", L"Открыть все") \
+    X(LocKey_ResetCosmetic, L"Reset collection", L"Сбросить коллекцию") \
     X(LocKey_CosmeticBox, L"Cosmetic box", L"Коробка косметики") \
     X(LocKey_RarityCommon, L"Common", L"Обычная") \
     X(LocKey_RarityUncommon, L"Uncommon", L"Необычная") \
@@ -1466,8 +1467,15 @@ namespace Cheat::Visuals
             Widgets::BeginPanel(HAX_LINE);
             Widgets::PanelHeader(g_Loc[LocKey_COSMETICS], g_Loc[LocKey_AvailableIfHost]);
             {
-                if (Widgets::Button(HAX_LINE, g_Loc[LocKey_UnlockAll], {}, {.MinW = Hax::Gui::GetContentRegionAvail().X}))
-                    GCheat->UnlockAllCosmetic = true;
+                {
+                    const float w = Widgets::CalcWidgetEqWidth(2);
+                    Hax::Gui::BeginHorizontal(5_px);
+                    if (Widgets::Button(HAX_LINE, g_Loc[LocKey_UnlockAll], {}, {.MinW = w}))
+                        GCheat->UnlockAllCosmetic = true;
+                    if (Widgets::Button(HAX_LINE, g_Loc[LocKey_ResetCosmetic], {}, {.MinW = w}))
+                        GCheat->ResetCosmetic = true;
+                    Hax::Gui::EndHorizontal();
+                }
 
                 Widgets::HorizontalLine(1_px);
 
