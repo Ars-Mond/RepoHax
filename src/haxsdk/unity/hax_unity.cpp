@@ -434,19 +434,26 @@ namespace UVM
 
     Method* ClassTryFindMethod(Class& klass, const char* name, const char* sig)
     {
-        void* iter = nullptr;
-        while (Method* method = ClassGetMethods(klass, &iter))
+        // Walk the inheritance chain: mono_class_get_methods only enumerates methods
+        // declared directly on a class, not inherited ones. Some game classes (e.g. the
+        // generic-based PrefabRef : PrefabRef<GameObject>) keep their members on a base,
+        // so resolve against parents too, mirroring mono_class_get_method_from_name.
+        for (Class* current = &klass; current != nullptr; current = ClassGetParent(*current))
         {
-            const char* methodName = MethodGetName(*method);
-            if (strcmp(methodName, name) == 0)
+            void* iter = nullptr;
+            while (Method* method = ClassGetMethods(*current, &iter))
             {
-                if (!sig || !sig[0])
-                    return method;
+                const char* methodName = MethodGetName(*method);
+                if (strcmp(methodName, name) == 0)
+                {
+                    if (!sig || !sig[0])
+                        return method;
 
-                Hax::StringBuilder<256> sb;
-                GetMethodSignature(*method, sb);
-                if (strcmp(sb.CStr(), sig) == 0)
-                    return method;
+                    Hax::StringBuilder<256> sb;
+                    GetMethodSignature(*method, sb);
+                    if (strcmp(sb.CStr(), sig) == 0)
+                        return method;
+                }
             }
         }
         return nullptr;
@@ -467,6 +474,12 @@ namespace UVM
     const char* ClassGetName(Class& klass)
     {
         static const char*(*s_ApiProc)(Class&) = (decltype(s_ApiProc))GetVMProc("mono_class_get_name");
+        return s_ApiProc(klass);
+    }
+
+    Class* ClassGetParent(Class& klass)
+    {
+        static Class*(*s_ApiProc)(Class&) = (decltype(s_ApiProc))GetVMProc("mono_class_get_parent");
         return s_ApiProc(klass);
     }
 

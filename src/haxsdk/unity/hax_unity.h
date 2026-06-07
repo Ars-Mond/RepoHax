@@ -81,6 +81,7 @@ namespace UVM // Unity Virtual Machine
     Type&               ClassGetType(Class& klass);
     VTable&             ClassGetVTable(Class& klass);
     const char*         ClassGetName(Class& klass);
+    Class*              ClassGetParent(Class& klass);
     uint8_t*            ClassGetStaticFieldData(Class& klass);
 
     void*               MethodGetPointer(Method& method);
